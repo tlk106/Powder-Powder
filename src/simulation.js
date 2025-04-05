@@ -1,6 +1,7 @@
+import { getGridPosition } from "./mouseHandler.js";
+
 const screenWidth = window.innerWidth; // Full screen width
 const screenHeight = window.innerHeight; // Full screen height
-import { getGridPosition } from "./mouseHandler.js";
 
 const columns = 190; // Number of columns
 const rows = 100; // Number of rows
@@ -11,30 +12,53 @@ const cellHeight = screenHeight / rows; // Height of each cell
 // Initialize the particles array
 const particles = Array.from({ length: columns }, () => Array(rows).fill(null));
 
-// Define a single particle
-const particle = { x: Math.floor(columns / 2), y: 0 }; // Start in the middle of the grid
-
-// Place the particle in the particles array
-particles[particle.x][particle.y] = true;
-
-// Function to update the particle's position
-const loop = () => {
-    if (particle.y < rows - 1) {
-        particles[particle.x][particle.y] = null; // Clear the current position
-        particle.y += 1; // Move the particle down
-        particles[particle.x][particle.y] = true; // Set the new position
-        getGridPosition(); // Call the function to get the grid position
+// Function to spawn a particle at the clicked position
+const spawnParticle = (x, y) => {
+    if (y < rows) {
+        particles[x][y] = true; // Mark the position as occupied by a particle
     }
+};
+
+// Function to update the particles' positions
+const loop = () => {
+    for (let x = 0; x < columns; x++) {
+        for (let y = rows - 1; y >= 0; y--) { // Start from the bottom row
+            if (particles[x][y]) { // If there's a particle at this position
+                const belowY = y + 1;
+                const leftX = x - 1;
+                const rightX = x + 1;
+
+                // Check if the space below is empty
+                if (belowY < rows && !particles[x][belowY]) {
+                    particles[x][y] = null; // Clear the current position
+                    particles[x][belowY] = true; // Move the particle down
+                } 
+                // Check if the left position is empty
+                else if (leftX >= 0 && !particles[leftX][y] && belowY < rows && !particles[leftX][belowY]) {
+                    particles[x][y] = null; // Clear the current position
+                    particles[leftX][y] = true; // Move the particle left
+                } 
+                // Check if the right position is empty
+                else if (rightX < columns && !particles[rightX][y] && belowY < rows && !particles[rightX][belowY]) {
+                    particles[x][y] = null; // Clear the current position
+                    particles[rightX][y] = true; // Move the particle right
+                }
+            }
+        }
+    }
+    getGridPosition(); // Call the function to get the grid position (if needed)
 };
 
 // Function to capture mouse input
 const captureMouseInput = () => {
     document.addEventListener('click', (event) => {
-        
+        const x = Math.floor(event.clientX / cellWidth); // Calculate column index
+        const y = Math.floor(event.clientY / cellHeight); // Calculate row index
+        spawnParticle(x, y); // Spawn a particle at the clicked position
     });
 };
 
 // Call the function to start capturing mouse input
 captureMouseInput();
 
-export { columns, rows, cellWidth, cellHeight, particles, particle, loop, captureMouseInput };
+export { columns, rows, cellWidth, cellHeight, particles, spawnParticle, loop, captureMouseInput };

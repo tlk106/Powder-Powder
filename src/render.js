@@ -1,6 +1,5 @@
-import { columns, rows, cellWidth, cellHeight, particles, particle, loop } from "./simulation.js";
+import { columns, rows, cellWidth, cellHeight, particles, loop } from "./simulation.js";
 import { powder } from "../common/elements.js";
-import { getGridPosition } from "./mouseHandler.js";
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -14,15 +13,19 @@ const render = () => {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Draw the single particle on top of the black background
-  if (particles[particle.x][particle.y]) {
-    ctx.fillStyle = powder.color; // Use the particle's color
-    ctx.fillRect(particle.x * cellWidth, particle.y * cellHeight, cellWidth, cellHeight);
+  // Draw all particles on top of the black background
+  ctx.fillStyle = powder.color; // Use the particle's color
+  for (let x = 0; x < columns; x++) {
+    for (let y = 0; y < rows; y++) {
+      if (particles[x][y]) {
+        ctx.fillRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight);
+      }
+    }
   }
 };
 
 const gameLoop = () => {
-  loop(); // Update particle position
+  loop(); // Update particle positions
   render(); // Render updated state
   requestAnimationFrame(gameLoop); // Schedule the next frame
 };
