@@ -1,47 +1,40 @@
-import { powder } from '../common/elements.js';
+const screenWidth = window.innerWidth; // Full screen width
+const screenHeight = window.innerHeight; // Full screen height
+import { getGridPosition } from "./mouseHandler.js";
 
-const columns = 50;
-const rows = 50;
-const size = 4;
-const particles = Array.from({ length: columns }, () => Array.from({ length: rows }, () => null));
+const columns = 190; // Number of columns
+const rows = 100; // Number of rows
 
+const cellWidth = screenWidth / columns; // Width of each cell
+const cellHeight = screenHeight / rows; // Height of each cell
 
-class Particle {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-}
+// Initialize the particles array
+const particles = Array.from({ length: columns }, () => Array(rows).fill(null));
 
-const tick = () => {
-    for (let x = 0; x < columns; x++) {
-        for (let y = 0; y < rows; y++) {
-            const particle = particles[x][y];
-            if (particle) {
-                if (y < rows - 1 && !particles[x][y + 1]) {
-                    particles[x][y + 1] = particle;
-                    particles[x][y] = null;
-                    particle.y++;
-                }
-            }
-        }
-    }
-}
+// Define a single particle
+const particle = { x: Math.floor(columns / 2), y: 0 }; // Start in the middle of the grid
 
-const addParticle = (x, y) => {
-    if (x >= 0 && x < columns && y >= 0 && y < rows) {
-        particles[x][y] = new Particle(x, y);
-    }
-}
+// Place the particle in the particles array
+particles[particle.x][particle.y] = true;
 
-// Game loop
+// Function to update the particle's position
 const loop = () => {
-    tick();
-    addParticle(25, 0);
-}
+    if (particle.y < rows - 1) {
+        particles[particle.x][particle.y] = null; // Clear the current position
+        particle.y += 1; // Move the particle down
+        particles[particle.x][particle.y] = true; // Set the new position
+        getGridPosition(); // Call the function to get the grid position
+    }
+};
 
-while (true) {
-    loop();
-}
+// Function to capture mouse input
+const captureMouseInput = () => {
+    document.addEventListener('click', (event) => {
+        
+    });
+};
 
-export { columns, rows, size, particles, Particle, tick, loop };
+// Call the function to start capturing mouse input
+captureMouseInput();
+
+export { columns, rows, cellWidth, cellHeight, particles, particle, loop, captureMouseInput };

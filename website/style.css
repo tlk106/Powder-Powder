@@ -1,0 +1,20 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* Ensure consistent sizing */
+}
+
+body, html {
+  overflow: hidden; /* Prevent scrollbars */
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+}
+
+canvas {
+  display: block; /* Remove extra spacing around the canvas */
+  position: fixed; /* Ensure it stays fixed to the viewport */
+  top: 0;
+  left: 0;
+  width: 100vw; /* Stretch to full viewport width */
+  height: 100vh; /* Stretch to full viewport height */
+}
