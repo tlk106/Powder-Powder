@@ -41,7 +41,6 @@ document.addEventListener("keydown", (event) => {
   const elementKeys = {
     "1": "powder",
     "2": "water",
-    "3": "sand", // Ensure "sand" exists in elements.js
   };
 
   if (elementKeys[event.key] && elements[elementKeys[event.key]]) {
