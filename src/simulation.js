@@ -98,6 +98,25 @@ const loop = () => {
                       }
                   }
               }
+
+              // Behavior for gas-like particles
+              if (elements[particle.type].isType("gas")) {
+                  // Randomly move gas particles in any direction
+                  const randomDirection = random(0, 4); // 0: left, 1: right, 2: up, 3: down
+                  if (randomDirection === 0 && leftX >= 0 && !particles[leftX][y]) {
+                      particles[x][y] = null;
+                      particles[leftX][y] = particle; // Move left
+                  } else if (randomDirection === 1 && rightX < columns && !particles[rightX][y]) {
+                      particles[x][y] = null;
+                      particles[rightX][y] = particle; // Move right
+                  } else if (randomDirection === 2 && y > 0 && !particles[x][y - 1]) {
+                      particles[x][y] = null;
+                      particles[x][y - 1] = particle; // Move up
+                  } else if (randomDirection === 3 && belowY < rows && !particles[x][belowY]) {
+                      particles[x][y] = null;
+                      particles[x][belowY] = particle; // Move down
+                  }
+              }
           }
       }
   }

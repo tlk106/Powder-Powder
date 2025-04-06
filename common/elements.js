@@ -17,7 +17,8 @@ class Element {
 
 const powder = new Element("Powder", "powder", 0, "yellow");
 const water = new Element("Water", "liquid", 1, "blue");
+const oxygen = new Element("Oxygen", "gas", 2, "lightblue");
 
-const elements = { powder, water }; // Group elements into an object
+const elements = { powder, water, oxygen }; // Group elements into an object
 
 export { elements, Element }; // Export the elements object and Element class
