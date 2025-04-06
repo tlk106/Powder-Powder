@@ -1,64 +1,105 @@
 import { getGridPosition } from "./mouseHandler.js";
+import { elements } from "../common/elements.js";
+import { random } from "../common/utils.js";
+ 
+const screenWidth = window.innerWidth;
+const screenHeight = window.innerHeight;
 
-const screenWidth = window.innerWidth; // Full screen width
-const screenHeight = window.innerHeight; // Full screen height
+const columns = 190;
+const rows = 100;
 
-const columns = 190; // Number of columns
-const rows = 100; // Number of rows
-
-const cellWidth = screenWidth / columns; // Width of each cell
-const cellHeight = screenHeight / rows; // Height of each cell
+const cellWidth = screenWidth / columns;
+const cellHeight = screenHeight / rows;
 
 // Initialize the particles array
 const particles = Array.from({ length: columns }, () => Array(rows).fill(null));
 
-// Function to spawn a particle at the clicked position
-const spawnParticle = (x, y) => {
-    if (y < rows) {
-        particles[x][y] = true; // Mark the position as occupied by a particle
-    }
+// Function to spawn a particle of a specific type at the clicked position
+const spawnParticle = (x, y, elementType) => {
+  if (y < rows && !particles[x][y]) {
+    particles[x][y] = { type: elementType }; // Assign the element type
+  }
 };
 
 // Function to update the particles' positions
 const loop = () => {
     for (let x = 0; x < columns; x++) {
-        for (let y = rows - 1; y >= 0; y--) { // Start from the bottom row
-            if (particles[x][y]) { // If there's a particle at this position
-                const belowY = y + 1;
-                const leftX = x - 1;
-                const rightX = x + 1;
-
-                // Check if the space below is empty
-                if (belowY < rows && !particles[x][belowY]) {
-                    particles[x][y] = null; // Clear the current position
-                    particles[x][belowY] = true; // Move the particle down
-                } 
-                // Check if the left position is empty
-                else if (leftX >= 0 && !particles[leftX][y] && belowY < rows && !particles[leftX][belowY]) {
-                    particles[x][y] = null; // Clear the current position
-                    particles[leftX][y] = true; // Move the particle left
-                } 
-                // Check if the right position is empty
-                else if (rightX < columns && !particles[rightX][y] && belowY < rows && !particles[rightX][belowY]) {
-                    particles[x][y] = null; // Clear the current position
-                    particles[rightX][y] = true; // Move the particle right
-                }
+      for (let y = rows - 1; y >= 0; y--) {
+        const particle = particles[x][y];
+        if (particle) {
+          const belowY = y + 1;
+          const leftX = x - 1;
+          const rightX = x + 1;
+  
+          // Behavior for powder-like particles
+          if (elements[particle.type].isType("powder")) {
+            if (belowY < rows && !particles[x][belowY]) {
+              particles[x][y] = null;
+              particles[x][belowY] = particle; // Move down
+            } else if (leftX >= 0 && belowY < rows && !particles[leftX][belowY]) {
+              particles[x][y] = null;
+              particles[leftX][belowY] = particle; // Move down-left
+            } else if (rightX < columns && belowY < rows && !particles[rightX][belowY]) {
+              particles[x][y] = null;
+              particles[rightX][belowY] = particle; // Move down-right
             }
+          }
+  
+          // Behavior for liquid-like particles
+          if (elements[particle.type].isType("liquid")) {
+            // Try to move down first
+            if (belowY < rows && !particles[x][belowY]) {
+              particles[x][y] = null;
+              particles[x][belowY] = particle; // Move down
+            } else {
+              // If it can't move down, try to move left or right
+              let moved = false;
+  
+              // Randomly decide to move left or right
+              if (Math.random() < 0.5) {
+                // Attempt to move left
+                if (leftX >= 0 && !particles[leftX][y]) {
+                  particles[x][y] = null;
+                  particles[leftX][y] = particle; // Move left
+                  moved = true;
+                }
+              } else {
+                // Attempt to move right
+                if (rightX < columns && !particles[rightX][y]) {
+                  particles[x][y] = null;
+                  particles[rightX][y] = particle; // Move right
+                  moved = true;
+                }
+              }
+  
+              // After moving left or right, check if it can fall down
+              if (moved) {
+                // Check for left movement
+                if (belowY < rows && leftX >= 0 && !particles[leftX][belowY]) {
+                  particles[leftX][y] = null;
+                  particles[leftX][belowY] = particle; // Move down after moving left
+                } 
+                // Check for right movement
+                else if (belowY < rows && rightX < columns && !particles[rightX][belowY]) {
+                  particles[rightX][y] = null;
+                  particles[rightX][belowY] = particle; // Move down after moving right
+                }
+              }
+            }
+          }
         }
+      }
     }
-    getGridPosition(); // Call the function to get the grid position (if needed)
-};
+  };
 
-// Function to capture mouse input
 const captureMouseInput = () => {
-    document.addEventListener('click', (event) => {
-        const x = Math.floor(event.clientX / cellWidth); // Calculate column index
-        const y = Math.floor(event.clientY / cellHeight); // Calculate row index
-        spawnParticle(x, y); // Spawn a particle at the clicked position
-    });
+  document.addEventListener("click", (event) => {
+    const x = Math.floor(event.clientX / cellWidth);
+    const y = Math.floor(event.clientY / cellHeight);
+    spawnParticle(x, y, "powder"); // Default to spawning powder
+  });
 };
 
-// Call the function to start capturing mouse input
 captureMouseInput();
 
-export { columns, rows, cellWidth, cellHeight, particles, spawnParticle, loop, captureMouseInput };
+export { columns, rows, cellWidth, cellHeight, particles, spawnParticle, loop };

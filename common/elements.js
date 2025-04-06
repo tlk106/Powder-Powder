@@ -8,8 +8,16 @@ class Element {
     this.id = id;
     this.color = color;
   }
+
+  // Check if the element is of a specific type
+  isType(type) {
+    return this.type === type;
+  }
 }
 
 const powder = new Element("Powder", "powder", 0, "yellow");
+const water = new Element("Water", "liquid", 1, "blue");
 
-export { powder };
+const elements = { powder, water }; // Group elements into an object
+
+export { elements, Element }; // Export the elements object and Element class
