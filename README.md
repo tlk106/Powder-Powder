@@ -17,3 +17,5 @@ A falling sand game like the powder game!
 ## Discord
 
 https://discord.gg/QaDnehCRtz
+
+## Play the game at https://tlk106.github.io/Powder-Powder/
