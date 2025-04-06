@@ -117,6 +117,12 @@ const loop = () => {
                       particles[x][belowY] = particle; // Move down
                   }
               }
+
+              // Behavior for solid-like particles
+              if (elements[particle.type].isType("solid")) {
+                  // Solids don't MOVE!
+                  continue;
+              }
           }
       }
   }
