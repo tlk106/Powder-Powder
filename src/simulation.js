@@ -16,10 +16,16 @@ const particles = Array.from({ length: columns }, () => Array(rows).fill(null));
 
 // Function to spawn a particle of a specific type at the clicked position
 const spawnParticle = (x, y, elementType) => {
-  if (y < rows && !particles[x][y]) {
-    particles[x][y] = { type: elementType }; // Assign the element type
-  }
-};
+    if (y < rows && x >= 0 && x < columns) {
+      if (elementType === null) {
+        particles[x][y] = null; // Erase particle
+      } else if (elements[elementType]) {
+        particles[x][y] = { type: elementType }; // Spawn particle
+      }
+    }
+  };
+
+
 
 // Function to update the particles' positions
 const loop = () => {
@@ -127,15 +133,5 @@ const loop = () => {
       }
   }
 };
-
-const captureMouseInput = () => {
-  document.addEventListener("click", (event) => {
-    const x = Math.floor(event.clientX / cellWidth);
-    const y = Math.floor(event.clientY / cellHeight);
-    spawnParticle(x, y, "powder"); // Default to spawning powder
-  });
-};
-
-captureMouseInput();
 
 export { columns, rows, cellWidth, cellHeight, particles, spawnParticle, loop };
