@@ -1,4 +1,4 @@
-import { getGridPosition } from "./mouseHandler.js";
+import { getGridPosition } from "./mouseAndKeyHandler.js";
 import { elements } from "../common/elements.js";
 import { random } from "../common/utils.js";
  
