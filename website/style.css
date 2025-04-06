@@ -18,3 +18,28 @@ canvas {
   width: 100vw; /* Stretch to full viewport width */
   height: 100vh; /* Stretch to full viewport height */
 }
+
+#menu-link {
+  background: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
+  padding: 10px; /* Padding around the link */
+  border-radius: 5px; /* Rounded corners */
+}
+
+#menu-link:hover {
+  background: rgba(255, 255, 255, 1); /* Full opacity on hover */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+#menu-link:active {
+  background: rgba(255, 255, 255, 0.5); /* Slightly transparent on click */
+}
+
+#link {
+  color: #000; /* Black text color */
+  text-decoration: none; /* Remove underline */
+  font-size: 16px; /* Font size for the link */
+}
+
+#link:hover {
+  text-decoration: underline; /* Underline on hover */
+}

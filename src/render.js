@@ -10,6 +10,30 @@ canvas.height = window.innerHeight;
 let isPaused = false; // Track whether the simulation is paused
 
 const render = () => {
+  // Show properties on hover
+  canvas.addEventListener("mousemove", (event) => {
+    const x = Math.floor(event.clientX / cellWidth);
+    const y = Math.floor(event.clientY / cellHeight);
+    const infoElement = document.getElementById("info");
+
+    if (particles[x] && particles[x][y]) {
+      const particle = particles[x][y];
+      const element = elements[particle.type];
+      infoElement.innerText = `Element: ${element.name}, Type: ${element.type}`; // Show element properties
+    } else {
+      infoElement.innerText = "Element: None, Type: None"; // Clear the info text if no particle exists
+    }
+  });
+  // Show mouse location
+  canvas.addEventListener("mousemove", (event) => {
+    const x = Math.floor(event.clientX / cellWidth);
+    const y = Math.floor(event.clientY / cellHeight);
+    const infoElement = document.getElementById("mouseLocation");
+
+    infoElement.innerText = `Mouse Location: (${x}, ${y})`;
+  });
+  ctx.fillStyle = "white";
+  ctx.fillRect(0, 0, canvas.width, 50); // Clear the top area for info
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 

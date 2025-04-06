@@ -8,6 +8,11 @@
 </head>
 <body>
   <canvas id="gameCanvas"></canvas>
+  <div id="info" style="position: absolute; top: 0; left: 0; background: white; padding: 5px; z-index: 10;"></div>
+  <div id="mouseLocation" style="position: absolute; top: 0; right: 0; background: white; padding: 5px; z-index: 10;"></div>
+  <div id="menu-link" style="position: absolute; bottom: 10px; right: 10px; z-index: 10;">
+    <a id="link" href="website/info.html">Info & Stuff</a>
+  </div>
   <script src="src/render.js" type="module"></script>
   <script src="src/simulation.js" type="module"></script>
   <script src="src/mouseAndKeyHandler.js" type="module"></script>
