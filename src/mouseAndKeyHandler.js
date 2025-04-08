@@ -68,6 +68,7 @@ document.addEventListener("keydown", (event) => {
     "2": "water",
     "3": "oxygen",
     "4": "stone",
+    "5": "oil",
   };
 
   if (elementKeys[event.key] && elements[elementKeys[event.key]]) {

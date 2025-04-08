@@ -23,11 +23,13 @@ class Element {
   }
 }
 
-const powder = new Element("Powder", "powder", 0, "yellow", 1);
+// Existing elements with updated masses
+const powder = new Element("Powder", "powder", 0, "yellow", 1.5);
 const water = new Element("Water", "liquid", 1, "blue", 1);
 const oxygen = new Element("Oxygen", "gas", 2, "lightblue", 0.001429);
 const stone = new Element("Stone", "solid", 3, "gray", 2.5);
+const oil = new Element("Oil", "liquid", 4, "orange", 0.9);
 
-const elements = { powder, water, oxygen, stone }; // Group elements into an object
+const elements = { powder, water, oxygen, stone, oil }; // Group elements into an object
 
 export { elements, Element }; // Export the elements object and Element class
