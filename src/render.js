@@ -8,6 +8,8 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 let isPaused = false; // Track whether the simulation is paused
+let lastFrameTime = performance.now();
+let fps = 0;
 
 // Move mousemove event listeners outside the render function
 canvas.addEventListener("mousemove", (event) => {
@@ -38,6 +40,11 @@ const render = () => {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+  // Display FPS
+  ctx.fillStyle = "white";
+  ctx.font = "20px Arial";
+  ctx.fillText(`FPS: ${fps.toFixed(1)}`, 10, 50);
+
   for (let x = 0; x < columns; x++) {
     for (let y = 0; y < rows; y++) {
       const particle = particles[x][y];
@@ -50,10 +57,14 @@ const render = () => {
 };
 
 const gameLoop = () => {
+  const currentFrameTime = performance.now();
+  fps = 1000 / (currentFrameTime - lastFrameTime);
+  lastFrameTime = currentFrameTime;
+
   if (!isPaused) {
-    loop();
-    render();
+    loop(); // Update simulation only when not paused
   }
+  render(); // Always render, even when paused
   requestAnimationFrame(gameLoop);
 };
 
