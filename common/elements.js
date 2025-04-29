@@ -1,5 +1,5 @@
 class Element {
-  constructor(name, id, color, mass, starttemp, meltingpoint, boilingpoint) {
+  constructor(name, id, color, mass, starttemp, meltingpoint, boilingpoint, ispowder) {
     if (
       typeof name !== "string" ||
       typeof id !== "number" ||
@@ -24,9 +24,10 @@ class Element {
   }
   isType(gettype) {
     const types = {
-      solid: this.starttemp < this.meltingpoint,
+      solid: this.starttemp < this.meltingpoint && !this.ispowder, // Exclude powders from solids
       liquid: this.starttemp >= this.meltingpoint && this.starttemp < this.boilingpoint,
       gas: this.starttemp >= this.boilingpoint,
+      powder: this.ispowder, // Add powder as a distinct type
     };
     return types[gettype] !== undefined ? types[gettype] : false;
   }
@@ -45,11 +46,11 @@ class Element {
 }
 
 // Existing elements with updated masses
-const powder = new Element("Powder", 0, "yellow", 1.5, 21, 1000, 8000);
-const water = new Element("Water", 1, "blue", 1, 21, 0, 100);
-const oxygen = new Element("Oxygen", 2, "lightblue", 0.001429, 21, -218.79, -182.96);
-const stone = new Element("Stone", 3, "gray", 2.5, 21, 1000, 8000);
-const oil = new Element("Oil", 4, "orange", 0.9, 21, -6, 300);
+const powder = new Element("Powder", 0, "yellow", 1.5, 21, 1000, 8000, true);
+const water = new Element("Water", 1, "blue", 1, 21, 0, 100, false);
+const oxygen = new Element("Oxygen", 2, "lightblue", 0.001429, 21, -218.79, -182.96, false);
+const stone = new Element("Stone", 3, "gray", 2.5, 21, 1000, 8000, false);
+const oil = new Element("Oil", 4, "orange", 0.9, 21, -6, 300, false);
 
 const elements = { powder, water, oxygen, stone, oil }; // Group elements into an object
 
