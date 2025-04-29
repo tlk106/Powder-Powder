@@ -7,7 +7,8 @@ class Element {
       typeof mass !== "number" ||
       typeof starttemp !== "number" ||
       typeof meltingpoint !== "number" ||
-      typeof boilingpoint !== "number"
+      typeof boilingpoint !== "number" ||
+      typeof ispowder !== "boolean" // Is powder instead of solid.
     ) {
       throw new Error("Invalid parameters");
     }
@@ -19,6 +20,27 @@ class Element {
     this.starttemp = starttemp; // Starting temperature in Celsius
     this.meltingpoint = meltingpoint; // Melting point in Celsius
     this.boilingpoint = boilingpoint; // Boiling point in Celsius
+    this.ispowder = ispowder; // Is powder instead of solid.
+  }
+  isType(gettype) {
+    const types = {
+      solid: this.starttemp < this.meltingpoint,
+      liquid: this.starttemp >= this.meltingpoint && this.starttemp < this.boilingpoint,
+      gas: this.starttemp >= this.boilingpoint,
+    };
+    return types[gettype] !== undefined ? types[gettype] : false;
+  }
+  isSolid() {
+    return this.starttemp < this.meltingpoint;
+  }
+  isLiquid() {
+    return this.starttemp >= this.meltingpoint && this.starttemp < this.boilingpoint;
+  }
+  isGas() {
+    return this.starttemp >= this.boilingpoint;
+  }
+  isPowder() {
+    return this.starttemp < this.meltingpoint && this.ispowder;
   }
 }
 
