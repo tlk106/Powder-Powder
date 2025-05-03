@@ -22,15 +22,6 @@ class Element {
     this.boilingpoint = boilingpoint; // Boiling point in Celsius
     this.ispowder = ispowder; // Is powder instead of solid.
   }
-  isType(gettype) {
-    const types = {
-      solid: this.starttemp < this.meltingpoint && !this.ispowder, // Exclude powders from solids
-      liquid: this.starttemp >= this.meltingpoint && this.starttemp < this.boilingpoint,
-      gas: this.starttemp >= this.boilingpoint,
-      powder: this.ispowder, // Add powder as a distinct type
-    };
-    return types[gettype] !== undefined ? types[gettype] : false;
-  }
   isSolid() {
     return this.starttemp < this.meltingpoint;
   }
@@ -46,7 +37,7 @@ class Element {
 }
 
 // Existing elements with updated masses
-const powder = new Element("Powder", 0, "yellow", 1.5, 21, 1000, 8000, true);
+const powder = new Element("Powder", 0, "yellow", 1.5, 10000, 1000, 8000, true);
 const water = new Element("Water", 1, "blue", 1, 21, 0, 100, false);
 const oxygen = new Element("Oxygen", 2, "lightblue", 0.001429, 21, -218.79, -182.96, false);
 const stone = new Element("Stone", 3, "gray", 2.5, 21, 1000, 8000, false);

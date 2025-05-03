@@ -7,6 +7,8 @@ let isMouseDown = false;
 let selectedElement = "powder"; // Default element
 let currentMouseButton = null; // Track which mouse button is pressed
 let cursorRadius = 0; // Default radius for spawning particles
+let placementInterval = null; // Interval for continuous placement
+let lastMouseEvent = null; // Store the last mouse event for continuous placement
 
 const getGridPosition = (mouseX, mouseY) => {
   const gridX = Math.floor(mouseX / cellWidth);
@@ -17,17 +19,35 @@ const getGridPosition = (mouseX, mouseY) => {
 canvas.addEventListener("mousedown", (event) => {
   isMouseDown = true;
   currentMouseButton = event.button; // Track which button is pressed
+  lastMouseEvent = event; // Store the current event
   handleMouseAction(event);
+
+  // Start continuous placement
+  if (!placementInterval) {
+    placementInterval = setInterval(() => {
+      if (isMouseDown && lastMouseEvent) {
+        handleMouseAction(lastMouseEvent); // Use the last mouse event for placement
+      }
+    }, 50); // Adjust interval as needed
+  }
 });
 
 canvas.addEventListener("mouseup", () => {
   isMouseDown = false;
   currentMouseButton = null; // Reset the button state
+  lastMouseEvent = null; // Clear the last mouse event
+
+  // Stop continuous placement
+  if (placementInterval) {
+    clearInterval(placementInterval);
+    placementInterval = null;
+  }
 });
 
 canvas.addEventListener("mousemove", (event) => {
+  lastMouseEvent = event; // Update the last mouse event
   if (isMouseDown) {
-    handleMouseAction(event);
+    handleMouseAction(event); // Continuously handle mouse actions while pressed
   }
 });
 
@@ -49,7 +69,7 @@ const handleMouseAction = (event) => {
           if (currentMouseButton === 2) { // Right-click for erase mode
             spawnParticle(targetX, targetY, null); // Erase particle
           } else if (currentMouseButton === 0) { // Left-click for placing particles
-            spawnParticle(targetX, targetY, selectedElement); // Spawn selected element
+            spawnParticle(targetX, targetY, selectedElement); // Pass selected element
           }
         }
       }

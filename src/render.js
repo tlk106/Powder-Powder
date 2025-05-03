@@ -11,28 +11,29 @@ let isPaused = false; // Track whether the simulation is paused
 let lastFrameTime = performance.now();
 let fps = 0;
 
-// Move mousemove event listeners outside the render function
-canvas.addEventListener("mousemove", (event) => {
-  const x = Math.floor(event.clientX / cellWidth);
-  const y = Math.floor(event.clientY / cellHeight);
-  const infoElement = document.getElementById("info");
+let lastMouseX = null;
+let lastMouseY = null;
 
-  if (particles[x] && particles[x][y]) {
-    const particle = particles[x][y];
-    const element = elements[particle.type];
-    infoElement.innerText = `Element: ${element.name}, Type: ${element.type}`; // Show element properties
-  } else {
-    infoElement.innerText = "Element: None, Type: None"; // Clear the info text if no particle exists
+canvas.addEventListener("mousemove", (event) => {
+  lastMouseX = event.clientX;
+  lastMouseY = event.clientY;
+});
+
+const updateTemperatureDisplay = () => {
+  if (lastMouseX !== null && lastMouseY !== null) {
+    const x = Math.floor(lastMouseX / cellWidth);
+    const y = Math.floor(lastMouseY / cellHeight);
+    const infoElement = document.getElementById("info");
+
+    if (particles[x] && particles[x][y]) {
+      const particle = particles[x][y];
+      const element = elements[particle.type];
+      infoElement.innerText = `Element: ${element.name}, Type: ${particle.type}, Temperature: ${particle.temperature.toFixed(1)}°C`;
+    } else {
+      infoElement.innerText = "Element: None, Type: None, Temperature: N/A";
+    }
   }
-});
-
-canvas.addEventListener("mousemove", (event) => {
-  const x = Math.floor(event.clientX / cellWidth);
-  const y = Math.floor(event.clientY / cellHeight);
-  const infoElement = document.getElementById("mouseLocation");
-
-  infoElement.innerText = `Mouse Location: (${x}, ${y})`;
-});
+};
 
 const render = () => {
   ctx.fillStyle = "white";
@@ -54,6 +55,8 @@ const render = () => {
       }
     }
   }
+
+  updateTemperatureDisplay(); // Update temperature display continuously
 };
 
 const gameLoop = () => {
