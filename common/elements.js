@@ -36,8 +36,8 @@ class Element {
   }
 }
 
-// Existing elements with updated masses
-const powder = new Element("Powder", 0, "yellow", 1.5, 21, 1000, 8000, true);
+// Existing elements with updated masses and valid colors
+const powder = new Element("Powder", 0, "yellow", 1.5, 2100, 1000, 8000, true);
 const water = new Element("Water", 1, "blue", 1, 21, 0, 100, false);
 const oxygen = new Element("Oxygen", 2, "lightblue", 0.001429, 21, -218.79, -182.96, false);
 const stone = new Element("Stone", 3, "gray", 2.5, 21, 1500, 8000, false);

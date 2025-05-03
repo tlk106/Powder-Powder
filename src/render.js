@@ -35,6 +35,48 @@ const updateTemperatureDisplay = () => {
   }
 };
 
+// Function to determine color based on temperature using gradients
+const getColorByTemperature = (baseColor, temperature, elementType) => {
+  // Special case for water
+  if (elementType === "water") {
+    return temperature > 100 ? "rgb(159, 162, 222)" : baseColor;
+  }
+
+  const thresholds = [
+    { temp: 525, color: [139, 0, 0] }, // Dull Red
+    { temp: 650, color: [255, 48, 48] }, // Cherry Red
+    { temp: 800, color: [255, 165, 0] }, // Orange
+    { temp: 1000, color: [255, 255, 0] }, // Yellow
+    { temp: 1200, color: [255, 255, 255] }, // White
+    { temp: 1400, color: [173, 216, 230] }, // Blueish White
+  ];
+
+  // If temperature is below the first threshold, use the base color
+  if (temperature < thresholds[0].temp) {
+    return baseColor;
+  }
+
+  // Find the two thresholds surrounding the temperature
+  let start = thresholds[0];
+  let end = thresholds[thresholds.length - 1];
+  for (let i = 0; i < thresholds.length - 1; i++) {
+    if (temperature >= thresholds[i].temp && temperature < thresholds[i + 1].temp) {
+      start = thresholds[i];
+      end = thresholds[i + 1];
+      break;
+    }
+  }
+
+  // Interpolate between the two colors
+  const t = (temperature - start.temp) / (end.temp - start.temp);
+  const interpolatedColor = start.color.map((startValue, index) =>
+    Math.round(startValue + t * (end.color[index] - startValue))
+  );
+
+  // Return the color as a CSS-compatible string
+  return `rgb(${interpolatedColor.join(",")})`;
+};
+
 const render = () => {
   ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, 50); // Clear the top area for info
@@ -50,7 +92,9 @@ const render = () => {
     for (let y = 0; y < rows; y++) {
       const particle = particles[x][y];
       if (particle) {
-        ctx.fillStyle = elements[particle.type].color;
+        const baseColor = elements[particle.type].color;
+        const color = getColorByTemperature(baseColor, particle.temperature, particle.type);
+        ctx.fillStyle = color; // Apply gradient-based color
         ctx.fillRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight);
       }
     }
