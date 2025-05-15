@@ -37,12 +37,20 @@ const updateTemperatureDisplay = () => {
 
 // Function to determine color based on temperature using gradients
 const getColorByTemperature = (baseColor, temperature, elementType) => {
+  // Convert baseColor to an array if it's a string
+  if (typeof baseColor === "string" && baseColor.startsWith("rgb")) {
+    baseColor = baseColor
+      .match(/\d+/g)
+      .map(Number); // Extract RGB values as an array
+  }
+
   // Special case for water
   if (elementType === "water") {
-    return temperature > 100 ? "rgb(159, 162, 222)" : baseColor;
+    return temperature > 100 ? "rgb(159, 162, 222)" : `rgb(${baseColor.join(",")})`;
   }
 
   const thresholds = [
+    { temp: 0, color: baseColor }, // Base color as an array
     { temp: 525, color: [139, 0, 0] }, // Dull Red
     { temp: 650, color: [255, 48, 48] }, // Cherry Red
     { temp: 800, color: [255, 165, 0] }, // Orange
@@ -53,7 +61,7 @@ const getColorByTemperature = (baseColor, temperature, elementType) => {
 
   // If temperature is below the first threshold, use the base color
   if (temperature < thresholds[0].temp) {
-    return baseColor;
+    return `rgb(${baseColor.join(",")})`;
   }
 
   // Find the two thresholds surrounding the temperature

@@ -36,12 +36,12 @@ class Element {
   }
 }
 
-// Existing elements with updated masses and valid colors
-const powder = new Element("Powder", 0, "yellow", 1.5, 2100, 1000, 8000, true);
-const water = new Element("Water", 1, "blue", 1, 21, 0, 100, false);
-const oxygen = new Element("Oxygen", 2, "lightblue", 0.001429, 21, -218.79, -182.96, false);
-const stone = new Element("Stone", 3, "gray", 2.5, 21, 1500, 8000, false);
-const oil = new Element("Oil", 4, "orange", 0.9, 21, -6, 300, false);
+// Existing elements with updated colors as RGB strings
+const powder = new Element("Powder", 0, "rgb(255, 255, 0)", 1.5, 2100, 1000, 8000, true);
+const water = new Element("Water", 1, "rgb(0, 0, 255)", 1, 21, 0, 100, false);
+const oxygen = new Element("Oxygen", 2, "rgb(173, 216, 230)", 0.001429, 21, -218.79, -182.96, false);
+const stone = new Element("Stone", 3, "rgb(128, 128, 128)", 2.5, 21, 1500, 8000, false);
+const oil = new Element("Oil", 4, "rgb(255, 165, 0)", 0.9, 21, -6, 300, false);
 
 const elements = { powder, water, oxygen, stone, oil }; // Group elements into an object
 
