@@ -44,6 +44,11 @@ const getColorByTemperature = (baseColor, temperature, elementType) => {
       .map(Number); // Extract RGB values as an array
   }
 
+  // Special case for steam
+  if (elementType === "steam") {
+    return `rgb(${baseColor.join(",")})`; // Always use base color for steam
+  }
+
   // Special case for water
   if (elementType === "water") {
     return temperature > 100 ? "rgb(159, 162, 222)" : `rgb(${baseColor.join(",")})`;

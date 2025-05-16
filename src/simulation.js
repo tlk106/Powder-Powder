@@ -42,6 +42,18 @@ const updateTemperature = (particle) => {
 // Function to determine the type of a particle based on its temperature
 const determineType = (particle) => {
     const element = elements[particle.type];
+    if (particle.type === "water") {
+        if (particle.temperature < 0) {
+            particle.type = "ice"; // Change type to ice
+        } else if (particle.temperature > 100) {
+            particle.type = "steam"; // Change type to steam
+        }
+    } else if (particle.type === "ice" && particle.temperature >= 0) {
+        particle.type = "water"; // Change type back to water
+    } else if (particle.type === "steam" && particle.temperature <= 100) {
+        particle.type = "water"; // Change type back to water
+    }
+
     if (particle.temperature < element.meltingpoint) {
         return element.ispowder ? "powder" : "solid";
     } else if (particle.temperature < element.boilingpoint) {
@@ -99,7 +111,7 @@ const loop = () => {
                         (!particles[x][belowY] || 
                         determineType(particles[x][belowY]) === "liquid" || 
                         determineType(particles[x][belowY]) === "gas" ||
-                        (particles[x][belowY] && elements[particles[x][belowY]?.type]?.mass < elements[particle.type].mass)) // Check density
+                        (particles[x][belowY] && determineType(particles[x][belowY]) !== "solid" && elements[particles[x][belowY]?.type]?.mass < elements[particle.type].mass)) // Check density
                     ) {
                         particles[x][y] = particles[x][belowY]; // Move water up if present
                         particles[x][belowY] = particle; // Move powder down
@@ -109,7 +121,7 @@ const loop = () => {
                         (!particles[leftX][belowY] || 
                         determineType(particles[leftX][belowY]) === "liquid" || 
                         determineType(particles[leftX][belowY]) === "gas" ||
-                        (particles[leftX][belowY] && elements[particles[leftX][belowY]?.type]?.mass < elements[particle.type].mass)) // Check density
+                        (particles[leftX][belowY] && determineType(particles[leftX][belowY]) !== "solid" && elements[particles[leftX][belowY]?.type]?.mass < elements[particle.type].mass)) // Check density
                     ) {
                         particles[x][y] = particles[leftX][belowY]; // Move water up if present
                         particles[leftX][belowY] = particle; // Move powder down-left
@@ -119,7 +131,7 @@ const loop = () => {
                         (!particles[rightX][belowY] || 
                         determineType(particles[rightX][belowY]) === "liquid" || 
                         determineType(particles[rightX][belowY]) === "gas" ||
-                        (particles[rightX][belowY] && elements[particles[rightX][belowY]?.type]?.mass < elements[particle.type].mass)) // Check density
+                        (particles[rightX][belowY] && determineType(particles[rightX][belowY]) !== "solid" && elements[particles[rightX][belowY]?.type]?.mass < elements[particle.type].mass)) // Check density
                     ) {
                         particles[x][y] = particles[rightX][belowY]; // Move water up if present
                         particles[rightX][belowY] = particle; // Move powder down-right
@@ -136,7 +148,7 @@ const loop = () => {
                         belowY < rows &&
                         (!particles[x][belowY] || 
                         determineType(particles[x][belowY]) === "gas" || 
-                        (particles[x][belowY] && elements[particles[x][belowY]?.type]?.mass < elements[particle.type].mass)) // Check density
+                        (particles[x][belowY] && determineType(particles[x][belowY]) !== "solid" && elements[particles[x][belowY]?.type]?.mass < elements[particle.type].mass)) // Check density
                     ) {
                         if (particles[x][belowY]) {
                             // Swap positions if the lighter element can move up
@@ -156,7 +168,7 @@ const loop = () => {
                                 leftX >= 0 &&
                                 (!particles[leftX][y] || 
                                 determineType(particles[leftX][y]) === "gas" || 
-                                (particles[leftX][y] && elements[particles[leftX][y]?.type]?.mass < elements[particle.type].mass)) // Check density
+                                (particles[leftX][y] && determineType(particles[leftX][y]) !== "solid" && elements[particles[leftX][y]?.type]?.mass < elements[particle.type].mass)) // Check density
                             ) {
                                 if (particles[leftX][y]) {
                                     // Swap positions if the lighter element can move
@@ -174,7 +186,7 @@ const loop = () => {
                                 rightX < columns &&
                                 (!particles[rightX][y] || 
                                 determineType(particles[rightX][y]) === "gas" || 
-                                (particles[rightX][y] && elements[particles[rightX][y]?.type]?.mass < elements[particle.type].mass)) // Check density
+                                (particles[rightX][y] && determineType(particles[rightX][y]) !== "solid" && elements[particles[rightX][y]?.type]?.mass < elements[particle.type].mass)) // Check density
                             ) {
                                 if (particles[rightX][y]) {
                                     // Swap positions if the lighter element can move
