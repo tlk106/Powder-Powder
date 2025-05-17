@@ -11,28 +11,84 @@ let isPaused = false; // Track whether the simulation is paused
 let lastFrameTime = performance.now();
 let fps = 0;
 
-// Move mousemove event listeners outside the render function
-canvas.addEventListener("mousemove", (event) => {
-  const x = Math.floor(event.clientX / cellWidth);
-  const y = Math.floor(event.clientY / cellHeight);
-  const infoElement = document.getElementById("info");
+let lastMouseX = null;
+let lastMouseY = null;
 
-  if (particles[x] && particles[x][y]) {
-    const particle = particles[x][y];
-    const element = elements[particle.type];
-    infoElement.innerText = `Element: ${element.name}, Type: ${element.type}`; // Show element properties
-  } else {
-    infoElement.innerText = "Element: None, Type: None"; // Clear the info text if no particle exists
+canvas.addEventListener("mousemove", (event) => {
+  lastMouseX = event.clientX;
+  lastMouseY = event.clientY;
+});
+
+const updateTemperatureDisplay = () => {
+  if (lastMouseX !== null && lastMouseY !== null) {
+    const x = Math.floor(lastMouseX / cellWidth);
+    const y = Math.floor(lastMouseY / cellHeight);
+    const infoElement = document.getElementById("info");
+
+    if (particles[x] && particles[x][y]) {
+      const particle = particles[x][y];
+      const element = elements[particle.type];
+      infoElement.innerText = `Element: ${element.name}, Type: ${particle.type}, Temperature: ${particle.temperature.toFixed(1)}°C`;
+    } else {
+      infoElement.innerText = "Element: None, Type: None, Temperature: N/A";
+    }
   }
-});
+};
 
-canvas.addEventListener("mousemove", (event) => {
-  const x = Math.floor(event.clientX / cellWidth);
-  const y = Math.floor(event.clientY / cellHeight);
-  const infoElement = document.getElementById("mouseLocation");
+// Function to determine color based on temperature using gradients
+const getColorByTemperature = (baseColor, temperature, elementType) => {
+  // Convert baseColor to an array if it's a string
+  if (typeof baseColor === "string" && baseColor.startsWith("rgb")) {
+    baseColor = baseColor
+      .match(/\d+/g)
+      .map(Number); // Extract RGB values as an array
+  }
 
-  infoElement.innerText = `Mouse Location: (${x}, ${y})`;
-});
+  // Special case for steam
+  if (elementType === "steam") {
+    return `rgb(${baseColor.join(",")})`; // Always use base color for steam
+  }
+
+  // Special case for water
+  if (elementType === "water") {
+    return temperature > 100 ? "rgb(159, 162, 222)" : `rgb(${baseColor.join(",")})`;
+  }
+
+  const thresholds = [
+    { temp: 0, color: baseColor }, // Base color as an array
+    { temp: 525, color: [139, 0, 0] }, // Dull Red
+    { temp: 650, color: [255, 48, 48] }, // Cherry Red
+    { temp: 800, color: [255, 165, 0] }, // Orange
+    { temp: 1000, color: [255, 255, 0] }, // Yellow
+    { temp: 1200, color: [255, 255, 255] }, // White
+    { temp: 1400, color: [173, 216, 230] }, // Blueish White
+  ];
+
+  // If temperature is below the first threshold, use the base color
+  if (temperature < thresholds[0].temp) {
+    return `rgb(${baseColor.join(",")})`;
+  }
+
+  // Find the two thresholds surrounding the temperature
+  let start = thresholds[0];
+  let end = thresholds[thresholds.length - 1];
+  for (let i = 0; i < thresholds.length - 1; i++) {
+    if (temperature >= thresholds[i].temp && temperature < thresholds[i + 1].temp) {
+      start = thresholds[i];
+      end = thresholds[i + 1];
+      break;
+    }
+  }
+
+  // Interpolate between the two colors
+  const t = (temperature - start.temp) / (end.temp - start.temp);
+  const interpolatedColor = start.color.map((startValue, index) =>
+    Math.round(startValue + t * (end.color[index] - startValue))
+  );
+
+  // Return the color as a CSS-compatible string
+  return `rgb(${interpolatedColor.join(",")})`;
+};
 
 const render = () => {
   ctx.fillStyle = "white";
@@ -49,11 +105,15 @@ const render = () => {
     for (let y = 0; y < rows; y++) {
       const particle = particles[x][y];
       if (particle) {
-        ctx.fillStyle = elements[particle.type].color;
+        const baseColor = elements[particle.type].color;
+        const color = getColorByTemperature(baseColor, particle.temperature, particle.type);
+        ctx.fillStyle = color; // Apply gradient-based color
         ctx.fillRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight);
       }
     }
   }
+
+  updateTemperatureDisplay(); // Update temperature display continuously
 };
 
 const gameLoop = () => {
