@@ -33,9 +33,11 @@ const spawnParticle = (x, y, elementType) => {
 // Function to update the temperature of particles
 const updateTemperature = (particle) => {
     if (particle.temperature > simulationTemperature) {
-        particle.temperature -= 0.1; // Gradually cool down
+        particle.temperature -= 0.005; // Gradually cool down
     } else if (particle.temperature < simulationTemperature) {
-        particle.temperature += 0.1; // Gradually heat up
+        particle.temperature += 0.005; // Gradually heat up
+    } else if (particle.temperature < -273.15) {
+        particle.temperature = -273.15; // Absolute zero limit
     }
 };
 
@@ -70,10 +72,11 @@ const conductHeat = (particle1, particle2) => {
     const element1 = elements[particle1.type];
     const element2 = elements[particle2.type];
 
-    const thermalConductivity = 0.1; // Adjust this value for heat transfer rate
+    // Use average conductivity of both elements
+    const thermalConductivity = (element1.conductivity + element2.conductivity) / 2;
     const temperatureDifference = particle1.temperature - particle2.temperature;
 
-    const heatTransfer = thermalConductivity * temperatureDifference;
+    const heatTransfer = thermalConductivity * temperatureDifference * 0.1; // scaling factor
 
     particle1.temperature -= heatTransfer;
     particle2.temperature += heatTransfer;
