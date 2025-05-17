@@ -2,7 +2,7 @@
 
 A falling sand game like the powder game!
 
-### Version Alpha 1.1.0
+### Version Alpha 1.2.0
 
 ##  How to install
 1. ```$ git clone https://github.com/tlk106/Powder-Powder.git```
@@ -48,3 +48,11 @@ https://discord.gg/QaDnehCRtz
   
 
 ## Play the game at https://tlk106.github.io/Powder-Powder/
+
+---
+
+### Changelog
+
+#### Alpha 1.2.0
+
+- (Describe new features/changes for 1.2.0 here)
