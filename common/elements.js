@@ -46,7 +46,8 @@ const stone = new Element("Stone", 3, "rgb(128, 128, 128)", 2.5, 21, 1500, 8000,
 const oil = new Element("Oil", 4, "rgb(255, 165, 0)", 0.9, 21, -6, 300, false, 0.15);
 const ice = new Element("Ice", 5, "rgb(173, 216, 230)", 0.92, -10, 0, 100, false, 2.2);
 const steam = new Element("Steam", 6, "rgb(161, 190, 209)", 0.0006, 300, 0, 100, false, 0.02);
+const lava = new Element("Lava", 7, "rgb(255, 80, 0)", 2.4, 1600, 700, 3000, false, 1.5);
 
-const elements = { powder, water, oxygen, stone, oil, ice, steam };
+const elements = { powder, water, oxygen, stone, oil, ice, steam, lava };
 
 export { elements, Element };

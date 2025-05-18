@@ -1,4 +1,4 @@
-import { cellWidth, cellHeight, spawnParticle } from "./simulation.js";
+import { cellWidth, cellHeight, spawnParticle, particles } from "./simulation.js";
 import { elements } from "../common/elements.js";
 
 const canvas = document.getElementById("gameCanvas");
@@ -66,7 +66,17 @@ const handleMouseAction = (event) => {
         const targetY = gridY + dy;
 
         if (targetX >= 0 && targetX < 190 && targetY >= 0 && targetY < 100) {
-          if (currentMouseButton === 2) { // Right-click for erase mode
+          if (selectedElement === "heat") {
+            // Heat tool: increase temperature of particle if present
+            if (particles[targetX] && particles[targetX][targetY]) {
+              particles[targetX][targetY].temperature += 10;
+            }
+          } else if (selectedElement === "cool") {
+            // Cool tool: decrease temperature of particle if present
+            if (particles[targetX] && particles[targetX][targetY]) {
+              particles[targetX][targetY].temperature -= 10;
+            }
+          } else if (currentMouseButton === 2) { // Right-click for erase mode
             spawnParticle(targetX, targetY, null); // Erase particle
           } else if (currentMouseButton === 0) { // Left-click for placing particles
             spawnParticle(targetX, targetY, selectedElement); // Pass selected element
@@ -82,22 +92,8 @@ canvas.addEventListener("contextmenu", (event) => {
   event.preventDefault();
 });
 
+// Adjust cursor radius with '+' and '-' keys
 document.addEventListener("keydown", (event) => {
-  const elementKeys = {
-    "1": "powder",
-    "2": "water",
-    "3": "oxygen",
-    "4": "stone",
-    "5": "oil",
-    "6": "ice",
-    "7": "steam",
-  };
-
-  if (elementKeys[event.key] && elements[elementKeys[event.key]]) {
-    selectedElement = elementKeys[event.key];
-  }
-
-  // Adjust cursor radius with '+' and '-' keys
   if (event.key === "+") {
     cursorRadius = Math.min(cursorRadius + 1, 10); // Limit max radius to 10
   } else if (event.key === "-") {
@@ -105,4 +101,12 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-export { getGridPosition };
+// Add a setter for selectedElement for dropdown use
+function setSelectedElement(elementKey) {
+  // Allow "heat" and "cool" as valid tools
+  if (elements[elementKey] || elementKey === "heat" || elementKey === "cool") {
+    selectedElement = elementKey;
+  }
+}
+
+export { getGridPosition, setSelectedElement };

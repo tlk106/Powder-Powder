@@ -44,6 +44,7 @@ const updateTemperature = (particle) => {
 // Function to determine the type of a particle based on its temperature
 const determineType = (particle) => {
     const element = elements[particle.type];
+    // Water transitions
     if (particle.type === "water") {
         if (particle.temperature < 0) {
             particle.type = "ice"; // Change type to ice
@@ -54,6 +55,12 @@ const determineType = (particle) => {
         particle.type = "water"; // Change type back to water
     } else if (particle.type === "steam" && particle.temperature <= 100) {
         particle.type = "water"; // Change type back to water
+    }
+    // Stone <-> Lava transitions
+    else if (particle.type === "stone" && particle.temperature > element.meltingpoint) {
+        particle.type = "lava";
+    } else if (particle.type === "lava" && particle.temperature <= elements.stone.meltingpoint) {
+        particle.type = "stone";
     }
 
     if (particle.temperature < element.meltingpoint) {

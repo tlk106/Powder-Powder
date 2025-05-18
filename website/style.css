@@ -43,3 +43,52 @@ canvas {
 #link:hover {
   text-decoration: underline; /* Underline on hover */
 }
+
+.dropdown {
+  position: absolute;
+  top: 70px;
+  left: 10px;
+  z-index: 20;
+}
+
+.dropbtn {
+  background-color: #fff;
+  color: #333;
+  padding: 10px 16px;
+  font-size: 16px;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+  z-index: 21;
+}
+
+.dropdown-content a {
+  color: #333;
+  padding: 10px 16px;
+  text-decoration: none;
+  display: block;
+  border-bottom: 1px solid #eee;
+}
+
+.dropdown-content a:last-child {
+  border-bottom: none;
+}
+
+.dropdown-content a:hover {
+  background-color: #e0e0e0;
+}
+
+.dropdown:hover .dropdown-content,
+.dropdown:focus-within .dropdown-content {
+  display: block;
+}
