@@ -2,7 +2,7 @@
 
 A falling sand game like the powder game!
 
-### Version Alpha 1.2.0
+### Version Alpha 1.2.1
 
 ##  How to install
 1. ```$ git clone https://github.com/tlk106/Powder-Powder.git```
@@ -17,15 +17,7 @@ A falling sand game like the powder game!
 
   
 
-1: **Select Powder**
-
-2: **Select Water**
-
-3: **Select Oxygen**
-
-4: **Select Stone**
-
-4: **Select Oil**
+**USE THE LEFT BUTTON TO ACCESS ELEMENT AND TOOL DROPDOWN.**
 
 **Space**: Pause/Resume the simulation
 
