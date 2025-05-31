@@ -71,6 +71,8 @@ canvas {
   border-radius: 5px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.5); /* Stronger shadow */
   z-index: 21;
+  max-height: 400px; /* Set a maximum height for the dropdown */
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .dropdown-content a {
