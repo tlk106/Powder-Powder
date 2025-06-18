@@ -40,6 +40,9 @@ class Element {
   isPowder() {
     return this.starttemp < this.meltingpoint && this.ispowder;
   }
+  isFire() {
+    return this.isfire;
+  }
 }
 
 // Define the elements with their properties
@@ -52,7 +55,7 @@ const ice = new Element("Ice", 5, "rgb(173, 216, 230)", 0.92, -10, 0, 100, false
 const steam = new Element("Steam", 6, "rgb(161, 190, 209)", 0.0006, 300, 0, 100, false, 0.02, false, false);
 const lava = new Element("Lava", 7, "rgb(255, 80, 0)", 2.4, 1600, 700, 3000, false, 1.5, false, false);
 const wood = new Element("Wood", 8, "rgb(222, 151, 100)", 0.6, 21, 200, 600, false, 0.1, true, false);
-const fire = new Element("Fire", 9, "rgb(255, 0, 0)", 0.001, 300, 300, 1000, false, 0.01, false, true);
+const fire = new Element("Fire", 9, "rgb(255, 0, 0)", 0.001, 300, 300, 1000, false, 0.01, true, true);
 
 const elements = { powder, water, oxygen, stone, oil, ice, steam, lava, wood, fire };
 

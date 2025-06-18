@@ -44,6 +44,10 @@ const updateTemperature = (particle) => {
 // Function to determine the type of a particle based on its temperature
 const determineType = (particle) => {
     const element = elements[particle.type];
+    // Always treat fire as fire
+    if (particle.type === "fire") {
+        return "fire";
+    }
     // Water transitions
     if (particle.type === "water") {
         if (particle.temperature < 0) {
@@ -238,6 +242,28 @@ const loop = () => {
                         particles[x][belowY] = particle;
                     }
                 }
+
+                // Behavior for fire
+                if (currentType === "fire") {
+                    const belowY = y + 1;
+                    const leftX = x - 1;
+                    const rightX = x + 1;
+                    const randomDirection = random(0, 4);
+                    if (randomDirection === 0 && leftX >= 0 && !particles[leftX][y]) {
+                        particles[x][y] = null;
+                        particles[leftX][y] = particle;
+                    } else if (randomDirection === 1 && rightX < columns && !particles[rightX][y]) {
+                        particles[x][y] = null;
+                        particles[rightX][y] = particle;
+                    } else if (randomDirection === 2 && y > 0 && !particles[x][y - 1]) {
+                        particles[x][y] = null;
+                        particles[x][y - 1] = particle;
+                    } else if (randomDirection === 3 && belowY < rows && !particles[x][belowY]) {
+                        particles[x][y] = null;
+                        particles[x][belowY] = particle;
+                    }
+                }
+
 
                 // Behavior for solid-like particles
                 if (currentType === "solid") {
