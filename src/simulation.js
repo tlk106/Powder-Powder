@@ -248,7 +248,7 @@ const loop = () => {
                     const belowY = y + 1;
                     const leftX = x - 1;
                     const rightX = x + 1;
-                    const randomDirection = random(0, 4);
+                    const randomDirection = random(0, 5);
                     if (randomDirection === 0 && leftX >= 0 && !particles[leftX][y]) {
                         particles[x][y] = null;
                         particles[leftX][y] = particle;
@@ -258,12 +258,14 @@ const loop = () => {
                     } else if (randomDirection === 2 && y > 0 && !particles[x][y - 1]) {
                         particles[x][y] = null;
                         particles[x][y - 1] = particle;
-                    } else if (randomDirection === 3 && belowY < rows && !particles[x][belowY]) {
+                    } else if (randomDirection === 3 && y > 0 && !particles[x][y - 1]) {
+                        particles[x][y] = null;
+                        particles[x][y - 1] = particle;
+                    } else if (randomDirection === 4 && belowY < rows && !particles[x][belowY]) {
                         particles[x][y] = null;
                         particles[x][belowY] = particle;
                     }
                 }
-
 
                 // Behavior for solid-like particles
                 if (currentType === "solid") {
