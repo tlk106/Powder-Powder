@@ -30,16 +30,31 @@ const spawnParticle = (x, y, elementType) => {
     }
 };
 
-// Function to update the temperature of particles
-const updateTemperature = (particle) => {
-    if (particle.temperature > simulationTemperature) {
-        particle.temperature -= 0.005; // Gradually cool down
-    } else if (particle.temperature < simulationTemperature) {
-        particle.temperature += 0.005; // Gradually heat up
-    } else if (particle.temperature < -273.15) {
-        particle.temperature = -273.15; // Absolute zero limit
+// Function to update the temperature of a particle based on Newton's Law of Cooling
+const updateTemperature = (particle, deltaTime = 1 / 60) => {
+    const ABSOLUTE_ZERO = -273.15;
+    const T_env = simulationTemperature;
+
+    if (particle.temperature < ABSOLUTE_ZERO) {
+        particle.temperature = ABSOLUTE_ZERO;
+        return;
+    }
+
+   
+    const tau = 30;
+    const k = 1 / tau;
+
+
+    const decayFactor = Math.exp(-k * deltaTime);
+    particle.temperature = T_env + (particle.temperature - T_env) * decayFactor;
+
+    if (particle.temperature < ABSOLUTE_ZERO) {
+        particle.temperature = ABSOLUTE_ZERO;
     }
 };
+
+
+
 
 // Function to determine the type of a particle based on its temperature
 const determineType = (particle) => {
@@ -47,6 +62,10 @@ const determineType = (particle) => {
     // Always treat fire as fire
     if (particle.type === "fire") {
         return "fire";
+    }
+    // Always treat smoke as gas
+    if (particle.type === "smoke") {
+        return "gas";
     }
     // Water transitions
     if (particle.type === "water") {
@@ -65,6 +84,11 @@ const determineType = (particle) => {
         particle.type = "lava";
     } else if (particle.type === "lava" && particle.temperature <= elements.stone.meltingpoint) {
         particle.type = "stone";
+    }
+    // Wood turns into fire instead of melting
+    else if (particle.type === "wood" && particle.temperature > element.meltingpoint) {
+        particle.type = "fire";
+        particle.temperature = Math.max(particle.temperature, 300);
     }
 
     if (particle.temperature < element.meltingpoint) {
@@ -228,26 +252,94 @@ const loop = () => {
                     const leftX = x - 1;
                     const rightX = x + 1;
                     const randomDirection = random(0, 4);
-                    if (randomDirection === 0 && leftX >= 0 && !particles[leftX][y]) {
-                        particles[x][y] = null;
-                        particles[leftX][y] = particle;
-                    } else if (randomDirection === 1 && rightX < columns && !particles[rightX][y]) {
-                        particles[x][y] = null;
-                        particles[rightX][y] = particle;
-                    } else if (randomDirection === 2 && y > 0 && !particles[x][y - 1]) {
-                        particles[x][y] = null;
-                        particles[x][y - 1] = particle;
-                    } else if (randomDirection === 3 && belowY < rows && !particles[x][belowY]) {
-                        particles[x][y] = null;
-                        particles[x][belowY] = particle;
+
+                    // Helper to check if gas can move into a cell (empty or lighter)
+                    const canMoveTo = (tx, ty) => {
+                        if (tx < 0 || tx >= columns || ty < 0 || ty >= rows) return false;
+                        const target = particles[tx][ty];
+                        if (!target) return true;
+                        // Allow swap if target is not solid and lighter than this gas
+                        const targetType = determineType(target);
+                        return (
+                            targetType !== "solid" &&
+                            elements[target.type]?.mass < elements[particle.type].mass
+                        );
+                    };
+
+                    if (randomDirection === 0 && canMoveTo(leftX, y)) {
+                        if (particles[leftX][y]) {
+                            // Swap if lighter
+                            const lighterParticle = particles[leftX][y];
+                            particles[leftX][y] = particle;
+                            particles[x][y] = lighterParticle;
+                        } else {
+                            particles[leftX][y] = particle;
+                            particles[x][y] = null;
+                        }
+                    } else if (randomDirection === 1 && canMoveTo(rightX, y)) {
+                        if (particles[rightX][y]) {
+                            const lighterParticle = particles[rightX][y];
+                            particles[rightX][y] = particle;
+                            particles[x][y] = lighterParticle;
+                        } else {
+                            particles[rightX][y] = particle;
+                            particles[x][y] = null;
+                        }
+                    } else if (randomDirection === 2 && canMoveTo(x, y - 1)) {
+                        if (particles[x][y - 1]) {
+                            const lighterParticle = particles[x][y - 1];
+                            particles[x][y - 1] = particle;
+                            particles[x][y] = lighterParticle;
+                        } else {
+                            particles[x][y - 1] = particle;
+                            particles[x][y] = null;
+                        }
+                    } else if (randomDirection === 3 && canMoveTo(x, belowY)) {
+                        if (particles[x][belowY]) {
+                            const lighterParticle = particles[x][belowY];
+                            particles[x][belowY] = particle;
+                            particles[x][y] = lighterParticle;
+                        } else {
+                            particles[x][belowY] = particle;
+                            particles[x][y] = null;
+                        }
                     }
                 }
 
                 // Behavior for fire
                 if (currentType === "fire") {
+                    // Fire spreading to flammable neighbors
+                    const fireNeighbors = [
+                        [x - 1, y], // Left
+                        [x + 1, y], // Right
+                        [x, y - 1], // Up
+                        [x, y + 1], // Down
+                    ];
+                    for (const [nx, ny] of fireNeighbors) {
+                        if (
+                            nx >= 0 && nx < columns && ny >= 0 && ny < rows &&
+                            particles[nx][ny] &&
+                            elements[particles[nx][ny].type] &&
+                            elements[particles[nx][ny].type].isflammable &&
+                            particles[nx][ny].type !== "fire"
+                        ) {
+                            particles[nx][ny].type = "fire";
+                            particles[nx][ny].temperature = Math.max(particles[nx][ny].temperature, 250); // Ignite
+                        }
+                    }
+
+                    // Turn fire into smoke if cooled
+                    if (particle.temperature < 100) {
+                        particles[x][y] = { 
+                            type: "smoke", 
+                            temperature: particle.temperature 
+                        };
+                        continue;
+                    }
                     const belowY = y + 1;
                     const leftX = x - 1;
                     const rightX = x + 1;
+
                     const randomDirection = random(0, 5);
                     if (randomDirection === 0 && leftX >= 0 && !particles[leftX][y]) {
                         particles[x][y] = null;
